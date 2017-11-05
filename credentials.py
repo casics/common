@@ -38,12 +38,14 @@ def get_keyring_credentials(ring, user=None):
     return (user, password, host, port)
 
 
-def save_keyring_credentials(ring, user, password, host, port):
+def save_keyring_credentials(ring, user, password, host=None, port=None):
     '''Saves the user, password, host and port info to the keyring.'''
     keyring.set_password(ring, "username", user)
     keyring.set_password(ring, "password", password)
-    keyring.set_password(ring, "host", host)
-    keyring.set_password(ring, "port", str(port))
+    if host:
+        keyring.set_password(ring, "host", host)
+    if port:
+        keyring.set_password(ring, "port", str(port))
 
 
 def obtain_credentials(ring, db, user=None, pswd=None, host=None, port=None,
@@ -52,10 +54,10 @@ def obtain_credentials(ring, db, user=None, pswd=None, host=None, port=None,
     if ring:
         (s_user, s_pswd, s_host, s_port) = get_keyring_credentials(ring)
 
-    if not host:
+    if host is not -1 and not host:
         host = s_host or input("{} host (default: {}): ".format(db, default_host))
         host = host or default_host
-    if not port:
+    if port is not -1 and not port:
         port = s_port or input("{} port (default: {}): ".format(db, default_port))
         port = port or default_port
     if not user:
