@@ -16,7 +16,7 @@ import sys
 from   pymongo import MongoClient
 from   datetime import datetime
 
-from utils import *
+from messages import *
 
 class GitHub():
     '''Class for handling GitHub user log-ins.'''
