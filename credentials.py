@@ -19,50 +19,82 @@ import keyring
 # .............................................................................
 # Explanation about the weird way this is done: the Python keyring module
 # only offers a single function for setting a value; ostensibly, this is
-# intended to store a password associated with an identifier.  However, we
-# need to store several pieces of information, including a user name.  Since
-# we don't know the user name ahead of time, we can't use that as a key to
-# look up the credentials.  So, the approach here is to subvert the
-# set_password() functionality to store the user name under the fake user
-# "username", the password under the fake user "password", the host under the
-# fake user "host", etc.
+# intended to store a password associated with an identifier (a user name),
+# and this identifier is expected to be obtained some other way, such as by
+# using the current user's computer login name.  This poses 2 problems for us:
+#
+#  1. The user may want to use a different user name for the remote service,
+#  so we can't assume the user's computer login name is the same.  We also
+#  don't want to ask for the remote user name every time we need the
+#  information, because that can end up presenting a dialog to the user every
+#  time, which quickly becomes unbearably annoying.  This means we can't use
+#  a user-generated identifer to access the keyring value -- we have to
+#  invent a value, and then store the user's name for the remote service as
+#  part of the value we store.  (Here, we use the fake user name "username" to
+#  access the value stored in the user's keyring for a given service.)
+#
+#  2. We need to store several pieces of information, not just a password,
+#  but the Python keyring module interface (and presumably most system
+#  keychains) does not allow anything but a string value.  The hackacious
+#  solution taken here is to concatenate several values into a single string
+#  used as the actual value stored.  The individual values are separated by a
+#  character that is unlikely to be part of any user-typed value.
 
-def get_keyring_credentials(ring, user=None):
-    '''Looks up user credentials for user 'user'.  If 'user' is None, gets
-    the user name stored in the "username" field.'''
-    if not user:
-        user = keyring.get_password(ring, "username")
-    password = keyring.get_password(ring, "password")
-    host     = keyring.get_password(ring, "host")
-    port     = keyring.get_password(ring, "port")
-    return (user, password, host, port)
+def get_credentials(service, user=None):
+    '''Looks up the user's credentials for the given 'service' using the
+    keyring/keychain facility on this computer.  If 'user' is None, this uses
+    the fake user named "credentials".  The latter makes it possible to access a
+    service with a different user login name than the user's current login
+    name without having to ask the user for the alternative name every time.
+    '''
+    value = keyring.get_password(service, user if user else 'credentials')
+    return _decode(value) if value else (None, None, None, None)
 
 
-def save_keyring_credentials(ring, user, password, host=None, port=None):
-    '''Saves the user, password, host and port info to the keyring.'''
-    keyring.set_password(ring, "username", user)
-    keyring.set_password(ring, "password", password)
-    if host:
-        keyring.set_password(ring, "host", host)
-    if port:
-        keyring.set_password(ring, "port", str(port))
+def save_credentials(service, user, pswd, host=None, port=None):
+    '''Saves the user, password, host and port info for 'service'.'''
+    user = user if user else ''
+    pswd = pswd if pswd else ''
+    host = host if host else ''
+    port = port if port else ''
+    keyring.set_password(service, 'credentials', _encode(user, pswd, host, port))
 
 
-def obtain_credentials(ring, db, user=None, pswd=None, host=None, port=None,
+def obtain_credentials(service, display_name,
+                       user=None, pswd=None, host=None, port=None,
                        default_host=None, default_port=None):
+    '''As the user for credentials for 'service'.'''
     (s_user, s_pswd, s_host, s_port) = (None, None, None, None)
-    if ring:
-        (s_user, s_pswd, s_host, s_port) = get_keyring_credentials(ring)
+    if service:
+        # If we're given a service, retrieve the stored (if any) for defaults.
+        (s_user, s_pswd, s_host, s_port) = get_credentials(service)
 
     if host is not -1 and not host:
-        host = s_host or input("{} host (default: {}): ".format(db, default_host))
+        host = s_host or input("{} host (default: {}): ".format(display_name,
+                                                                default_host))
         host = host or default_host
     if port is not -1 and not port:
-        port = s_port or input("{} port (default: {}): ".format(db, default_port))
+        port = s_port or input("{} port (default: {}): ".format(display_name,
+                                                                default_port))
         port = port or default_port
     if not user:
-        user = s_user or input("{} user name: ".format(db))
+        user = s_user or input("{} user name: ".format(display_name))
     if not pswd:
-        pswd = s_pswd or getpass.getpass()
+        pswd = s_pswd or getpass.getpass('{} password: '.format(display_name))
 
     return (user, pswd, host, port)
+
+
+_sep = ''
+'''Character used to separate multiple actual values stored as a single
+encoded value string.  This character is deliberately chosen to be something
+very unlikely to be part of a legitimate string value typed by user at a
+shell prompt, because control-c is normally used to interrupt programs.
+'''
+
+def _encode(user, pswd, host, port):
+    return '{}{}{}{}{}{}{}'.format(user, _sep, pswd, _sep, host, _sep, port)
+
+
+def _decode(value_string):
+    return tuple(value_string.split(_sep))
