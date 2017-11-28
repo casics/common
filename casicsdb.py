@@ -85,6 +85,16 @@ import os
 import sys
 
 
+# Global constants.
+# .............................................................................
+
+_CONN_TIMEOUT = 5000
+'''Time to wait for connection to databases, in milliseconds.'''
+
+_CASICS_KEYRING = "org.casics.casics"
+'''The name of the keyring entry for LoCTerms client users.'''
+
+
 # Database entry template.
 # -----------------------------------------------------------------------------
 
