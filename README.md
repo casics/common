@@ -3,9 +3,9 @@ CASICS Common
 
 <img width="100px" align="right" src=".graphics/casics-logo-small.svg">
 
-This is a collection of common utility functions classes that is included as a submodule by core CASICS modules. Included here are things such as logging code, credentials/authentication code, and more.
+This is a collection of common utility functions and classes that is included as a submodule by other CASICS modules. Included here are things such as common database access functions, credentials/authentication code, and more.
 
-*Authors*:      [Michael Hucka](http://github.com/mhucka) and [Matthew J. Graham](https://github.com/doccosmos)<br>
+*Authors*:      [Michael Hucka](http://github.com/mhucka)<br>
 *Repository*:   [https://github.com/casics/common](https://github.com/casics/common)<br>
 *License*:      Unless otherwise noted, this content is licensed under the [GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) license.
 
