@@ -52,7 +52,8 @@ class Logger(metaclass=Singleton):
             return
         if not name:
             name = sys.argv[0] if len(sys.argv) > 1 else 'log'
-            name = name[:name.rfind('.')]
+            if name.rfind('.') > 0:
+                name = name[:name.rfind('.')]
         if not file:
             file = name + '.log'
         if os.path.isfile(file):
