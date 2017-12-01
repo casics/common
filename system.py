@@ -67,30 +67,6 @@ def run(cmd, file):
         os.unlink(out_file)
 
 
-def full_path(filename, subdir=None):
-    '''Return a full path based on the current file or current working dir.
-    'filename' is assumed to be a simple file name and not a path.  Optional
-    'subdir' can be a subdirectory relative, to the current directory, where
-    'filename' is found.
-    '''
-    if subdir and os.path.isabs(subdir):
-        return os.path.join(subdir, filename)
-    else:
-        import inspect
-        try:
-            calling_file = inspect.getfile(sys._getframe(1))
-            thisdir = os.path.dirname(os.path.realpath(calling_file))
-        except:
-            if '__file__' in globals():
-                thisdir = os.path.dirname(os.path.realpath(__file__))
-            else:
-                thisdir = os.getcwd()
-        if subdir:
-            return os.path.join(os.path.join(thisdir, subdir), filename)
-        else:
-            return os.path.join(thisdir, filename)
-
-
 def file_magic(file):
     '''Deal with differences in Python magic's return value on different OSes.
     '''
@@ -102,14 +78,6 @@ def file_magic(file):
             return value.decode('utf-8')
         except UnicodeError:
             return value.decode('iso8859-1')
-
-
-@contextlib.contextmanager
-def cwd_preserved():
-    # Code based on http://stackoverflow.com/a/169112/743730
-    curdir = os.getcwd()
-    try: yield
-    finally: os.chdir(curdir)
 
 
 # We mainly need to redirect stderr, but best get everything into a file.
