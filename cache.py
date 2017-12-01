@@ -8,7 +8,7 @@ __author__  = 'Michael Hucka <mhucka@caltech.edu>'
 __email__   = 'mhucka@caltech.edu'
 __license__ = 'GPLv3'
 
-from   logger import *
+from   .logger import *
 import os
 import pickle
 
