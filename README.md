@@ -12,7 +12,9 @@ This is a collection of common utility functions and classes that is included as
 ☀ Introduction
 -----------------------------
 
-The CASICS code base is modularized into several repositories placed under a [single common organization in GitHub](https://github.com/casics).  Most of the code needs some common utility functions.  To avoid unacceptable copy-pasting of the common routines, we maintain them in this common submodule that can be incorporated by other CASICS modules using `git submodule add`.
+The CASICS code base is modularized into several repositories placed under a [single common organization in GitHub](https://github.com/casics).  Most of the code needs some common utility functions.  To avoid unacceptable copy-pasting of the common routines, we maintain them in this common submodule.
+
+The structure of this module is slightly unusual: it does not have a subdirectory, there is no `setup.py`, and all of the module files are at the top level.  THis makes it possible to incorporate this module in other CASICS modules using `git submodule add`.
 
 ⁇ Getting help and support
 --------------------------
