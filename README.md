@@ -31,7 +31,7 @@ Everyone is asked to read and respect the [code of conduct](CONDUCT.md) when par
 ❤️ Acknowledgments
 ------------------
 
-Funding for this and other CASICS work has come from the [National Science Foundation](https://nsf.gov) via grant NSF EAGER #1533792 (Principal Investigator: Michael Hucka).
+This material is based upon work supported by the [National Science Foundation](https://nsf.gov) under Grant Number 1533792 (Principal Investigator: Michael Hucka).  Any opinions, findings, and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the National Science Foundation.
 
 This incorporates some small functions found in online discussion forums, notably [Stack Overflow](https://stackoverflow.com).  Attributions and links to the original sources are given in the source code here.  According to the posting [Clarity on Using Code on Stack Overflow and Stack Exchange](https://meta.stackexchange.com/questions/271080/the-mit-license-clarity-on-using-code-on-stack-overflow-and-stack-exchange), code contributions on Stack Overflow and Stack Exchange sites is considered to be covered by the [MIT License](https://opensource.org/licenses/MIT) as of February, 2016.
     
